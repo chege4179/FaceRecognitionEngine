@@ -20,9 +20,16 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-rekognition": "^3.758.0",
+    "@nestjs/axios": "^4.0.0",
+    "@nestjs/class-validator": "^0.13.4",
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^11.0.1",
+    "aws-sdk": "^2.1692.0",
+    "aws-sdk-v3-nest": "^1.0.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
