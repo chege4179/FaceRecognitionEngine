@@ -5,7 +5,6 @@ import {Repository} from "typeorm";
 import {CaptureFaceDetailsDto} from "src/shared/dto/capture-face-details-dto";
 import {CommonFunction} from "../../shared/util/CommonFunction";
 import {QueryFaceDto} from "../../shared/dto/queryFace-dto";
-import {testData} from "../../shared/util/testData";
 
 
 @Injectable()
