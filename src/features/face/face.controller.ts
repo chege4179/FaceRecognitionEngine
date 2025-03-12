@@ -41,5 +41,11 @@ export class FaceController {
         return await this.faceService.queryFaceMatches(payload);
     }
 
+    @HttpCode(HttpStatus.OK)
+    @Get("createCollection")
+    async createCollection (){
+        return await this.faceService.createCollection();
+    }
+
 
 }
