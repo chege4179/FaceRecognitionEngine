@@ -25,7 +25,6 @@ RUN npm install --target_arch=x64 --target_platform=linux --target_libc=glibc --
 EXPOSE ${PORT}
 COPY . .
 
-RUN npm run db
 
 RUN npm run build
 
