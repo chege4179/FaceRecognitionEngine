@@ -1,4 +1,4 @@
-FROM node:20-alpine3.17 as builder
+FROM node:20-alpine as builder
 
 ARG DATABASE_URL
 ARG NODE_ENV
@@ -19,7 +19,6 @@ WORKDIR /app
 COPY package*.json ./
 
 
-
 RUN npm install --target_arch=x64 --target_platform=linux --target_libc=glibc --legacy-peer-deps
 
 EXPOSE ${PORT}
@@ -29,7 +28,7 @@ COPY . .
 RUN npm run build
 
 
-FROM node:20-alpine3.17 AS production
+FROM node:20-alpine AS production
 
 # Arguments for environment variables
 ARG PORT
