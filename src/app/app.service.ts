@@ -6,7 +6,6 @@ import {AxiosError} from "axios";
 import {Repository} from "typeorm";
 import {FaceEntity} from "../shared/entity/face.entity";
 import {InjectRepository} from "@nestjs/typeorm";
-import {testData} from "../shared/util/testData";
 
 
 @Injectable()
@@ -56,26 +55,11 @@ export class AppService {
             throw new BadRequestException(e.message);
         }
     }
-
-    async seedData(){
+    async clearData(){
         try {
             await this.faceRepository.clear()
-
-            const faceEntitys = testData.data.map((data) => {
-                const faceEntity = new FaceEntity();
-                faceEntity.name = data.name;
-                faceEntity.faceEmbeddings = data.faceprint
-                faceEntity.idNo = data.id.toString()
-                faceEntity.imageUrl = data.name
-                return faceEntity;
-            })
-            const result = await this.faceRepository.save(faceEntitys)
-            return {
-                faces: result,
-            }
-        }catch (error){
+        }catch (error) {
             Logger.error(error);
-            throw new BadRequestException(error.message);
         }
     }
 }

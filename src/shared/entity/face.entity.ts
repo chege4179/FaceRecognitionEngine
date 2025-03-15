@@ -13,13 +13,14 @@ export class FaceEntity {
     @Column()
     name: string;
 
-    @Column("longtext")
-    faceEmbeddings: string;
-
+    @Column()
+    faceId: string;
 
     @Column()
     imageUrl: string;
 
+    @Column()
+    imageId: string;
 
     @CreateDateColumn()
     dateCreated: Date;

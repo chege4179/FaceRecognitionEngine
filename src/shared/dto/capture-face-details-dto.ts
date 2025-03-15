@@ -12,10 +12,4 @@ export class CaptureFaceDetailsDto{
     @IsDefined()
     name:string
 
-
-    @IsNotEmpty()
-    @IsDefined()
-    faceEmbedding:string
-
-
 }

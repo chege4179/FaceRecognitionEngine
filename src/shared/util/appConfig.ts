@@ -5,7 +5,8 @@
 
 export const AppConfig = {
     JWT_SECRET:"peter",
-    OTP_EXPIRY_TIME: 2 * 60
+    OTP_EXPIRY_TIME: 2 * 60,
+    FACE_COLLECTION_ID:"faces"
 }
 
 export const LoggerTags = {

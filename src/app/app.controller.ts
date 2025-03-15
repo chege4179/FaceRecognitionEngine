@@ -16,7 +16,7 @@ export class AppController {
     @HttpCode(HttpStatus.OK)
     @Get("seedData")
     async seedData() {
-        return await this.appService.seedData();
+        return await this.appService.clearData();
     }
 
     @HttpCode(HttpStatus.OK)
