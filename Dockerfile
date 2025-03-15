@@ -18,7 +18,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-
+RUN npm install npm@latest
 RUN npm install --target_arch=x64 --target_platform=linux --target_libc=glibc --legacy-peer-deps
 
 EXPOSE ${PORT}
