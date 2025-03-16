@@ -13,7 +13,6 @@ import {FaceService} from "./face.service";
 import {CaptureFaceDetailsDto} from "../../shared/dto/capture-face-details-dto";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {FileTypeValidationPipe} from "src/shared/pipes/fileTypeValidator.pipe";
-import {QueryFaceDto} from "../../shared/dto/queryFace-dto";
 import {DeleteFaceDto} from "../../shared/dto/delete-face-dto";
 
 @Controller("face")

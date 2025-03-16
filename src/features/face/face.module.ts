@@ -9,6 +9,4 @@ import {FaceService} from "./face.service";
     controllers: [FaceController],
     providers: [FaceService],
 })
-export class FaceModule {
-
-}
+export class FaceModule {}
