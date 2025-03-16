@@ -1,4 +1,4 @@
-import { Module} from "@nestjs/common";
+import {Module} from "@nestjs/common";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {EventEmitterModule} from "@nestjs/event-emitter";
 import {HttpModule} from "@nestjs/axios";
@@ -33,7 +33,6 @@ import {FaceRepositoryService} from "../repository/face-repository.service";
                     credentials: {
                         accessKeyId: configService.getOrThrow<string>("AWS_ACCESS_KEY_ID"),
                         secretAccessKey: configService.getOrThrow<string>("AWS_SECRET_ACCESS_KEY"),
-                        sessionToken:configService.getOrThrow<string>("AWS_SESSION_TOKEN")
                     },
                 })
             },
