@@ -42,14 +42,10 @@ export class FaceService {
 
     async getAllSavedFaces() {
         try {
-            const describeCollectionCommand = new DescribeCollectionCommand({
-                CollectionId: AppConfig.FACE_COLLECTION_ID,
-            });
             const listFaceCollectionsCommand = new ListFacesCommand({
                 CollectionId: AppConfig.FACE_COLLECTION_ID,
             })
 
-            const collectionDetails = await this.rekognitionClient.send(describeCollectionCommand)
             const userData = await this.faceRepository.find()
             const faces = await this.rekognitionClient.send(listFaceCollectionsCommand)
             const facesData = userData.map(user => {
@@ -59,7 +55,6 @@ export class FaceService {
                 }
             })
             return {
-                collectionDetails: collectionDetails,
                 faces: facesData,
             }
         } catch (e) {
