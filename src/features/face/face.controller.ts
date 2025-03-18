@@ -53,9 +53,6 @@ export class FaceController {
         @UploadedFile(
             new FileTypeValidationPipe(),
             new ParseFilePipeBuilder()
-                .addFileTypeValidator({
-                    fileType: /(jpg|jpeg|png|webp|heic)$/
-                })
                 .addMaxSizeValidator({
                     maxSize: 1000000
                 })
