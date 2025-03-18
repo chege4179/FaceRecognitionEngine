@@ -51,12 +51,15 @@ export class FaceController {
     @Post("queryFace")
     async queryFaceMatchs(
         @UploadedFile(
-            new FileTypeValidationPipe(),
             new ParseFilePipeBuilder()
+                .addFileTypeValidator({
+                    fileType: /(jpg|jpeg|png|webp)$/
+                })
                 .addMaxSizeValidator({
                     maxSize: 1000000
                 })
                 .build({
+                    fileIsRequired: true,
                     errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
                 })
         ) file: Express.Multer.File,

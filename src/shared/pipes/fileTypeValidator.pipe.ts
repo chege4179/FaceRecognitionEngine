@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, PipeTransform} from "@nestjs/common";
+import {BadRequestException, Injectable, Logger, PipeTransform} from "@nestjs/common";
 import {loadEsm} from 'load-esm';
 
 @Injectable()
@@ -8,6 +8,8 @@ export class FileTypeValidationPipe implements PipeTransform {
         const { fileTypeFromBuffer } = await loadEsm<typeof import('file-type')>('file-type')
 
         const result = await fileTypeFromBuffer(value.buffer)
+
+        Logger.log(`MIME received ${result.mime}`,"FileTypeValidationPipe")
         if (result){
             const MIME_TYPES = [
                 "image/jpeg",

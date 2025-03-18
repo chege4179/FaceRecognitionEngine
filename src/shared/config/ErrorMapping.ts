@@ -11,7 +11,7 @@ export const ErrorMapping = {
     },
     NO_FACE_DETECTED: {
         message:
-            'Face detection or validation failed, kindly ensure you remain calm, capture your face clearly, remove any obstruction and move to brightly lighted area',
+            'No face was detected, kindly ensure you remain calm, capture your face clearly, remove any obstruction and move to brightly lighted area',
         code: 'NO_FACE_DETECTED',
     },
     SEARCH_FACES_FAILED: {

@@ -164,31 +164,59 @@ export class FaceService {
 
     async queryFaceMatches(file: Express.Multer.File) {
         try {
-            const command = new SearchFacesByImageCommand({
-                CollectionId: AppConfig.FACE_COLLECTION_ID,
+            const detectFacesRequest: DetectFacesRequest = {
                 Image: {
                     Bytes: file.buffer,
                 },
-                MaxFaces: 1,
-                FaceMatchThreshold: 95
-            })
-            const result = await this.rekognitionClient.send(command)
-            if (result) {
-                const matches = result.FaceMatches
+                Attributes: ['ALL'],
+            };
+            const detectFacesCommand: DetectFacesCommand = new DetectFacesCommand(
+                detectFacesRequest,
+            );
+            const detectFacesResponse = await this.rekognitionClient.send(detectFacesCommand)
+            if (detectFacesResponse) {
+                if (detectFacesResponse.$metadata.httpStatusCode === HttpStatus.OK){
+                    if (detectFacesResponse.FaceDetails){
+                        if (detectFacesResponse.FaceDetails.length === 0) {
+                            await this.commonFunction.errorResponseMapping(ErrorMapping.NO_FACE_DETECTED);
+                        }else {
+                            if (detectFacesResponse.FaceDetails.length === 1) {
+                                const command = new SearchFacesByImageCommand({
+                                    CollectionId: AppConfig.FACE_COLLECTION_ID,
+                                    Image: {
+                                        Bytes: file.buffer,
+                                    },
+                                    MaxFaces: 1,
+                                    FaceMatchThreshold: 95
+                                })
+                                const result = await this.rekognitionClient.send(command)
+                                if (result) {
+                                    const matches = result.FaceMatches
 
-                if (matches && matches.length > 0) {
-                    const firstMatchFaceId = matches[0]?.Face
-                    const user = await this.faceRepositoryService.findUserByFaceID(firstMatchFaceId?.FaceId || "")
-                    if (user){
-                        return {
-                            msg: "User found",
-                            user: user,
+                                    if (matches && matches.length > 0) {
+                                        const firstMatchFaceId = matches[0]?.Face
+                                        const user = await this.faceRepositoryService.findUserByFaceID(firstMatchFaceId?.FaceId || "")
+                                        if (user){
+                                            return {
+                                                msg: "User found",
+                                                user: user,
+                                            }
+                                        }else {
+                                            await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETAILS_NOT_FOUND)
+                                        }
+                                    } else {
+                                        await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_SEARCH_NOT_FOUND)
+                                    }
+                                }
+                            }else {
+                                await this.commonFunction.errorResponseMapping(ErrorMapping.MULTIPLE_FACES_DETECTED);
+                            }
                         }
                     }else {
-                        await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETAILS_NOT_FOUND)
+                        await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETECTION_FAILED);
                     }
-                } else {
-                    await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_SEARCH_NOT_FOUND)
+                }else {
+                    await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETECTION_FAILED);
                 }
             }
         }catch (error) {
