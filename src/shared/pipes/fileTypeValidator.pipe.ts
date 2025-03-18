@@ -1,22 +1,33 @@
 import {BadRequestException, Injectable, Logger, PipeTransform} from "@nestjs/common";
 import {loadEsm} from 'load-esm';
+import heicConvert from "heic-convert"
 
 @Injectable()
 export class FileTypeValidationPipe implements PipeTransform {
     async transform(value: Express.Multer.File) {
 
-        const { fileTypeFromBuffer } = await loadEsm<typeof import('file-type')>('file-type')
+        const {fileTypeFromBuffer} = await loadEsm<typeof import('file-type')>('file-type')
 
         const result = await fileTypeFromBuffer(value.buffer)
 
-        Logger.log(`MIME received ${result.mime}`,"FileTypeValidationPipe")
-        if (result){
+        Logger.log(`MIME received ${result.mime}`, "FileTypeValidationPipe")
+        if (result.mime === "image/heic") {
+            const outputBuffer = await heicConvert({
+                buffer: value.buffer,
+                format: 'JPEG',
+                quality: 1
+            });
+            return {
+                ...value,
+                buffer: outputBuffer,
+            }
+        }
+        if (result) {
             const MIME_TYPES = [
                 "image/jpeg",
                 "image/jpg",
                 "image/png",
                 "image/webp",
-                "image/heic"
             ]
 
             if (!MIME_TYPES.includes(result.mime)) {
@@ -25,12 +36,11 @@ export class FileTypeValidationPipe implements PipeTransform {
                 )
             }
             return value
-        }else {
+        } else {
             throw new BadRequestException(
                 "File type could not be detected"
             )
         }
-
 
 
     }
