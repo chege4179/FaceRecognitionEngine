@@ -51,6 +51,7 @@ export class FaceController {
     @Post("queryFace")
     async queryFaceMatchs(
         @UploadedFile(
+            new FileTypeValidationPipe(),
             new ParseFilePipeBuilder()
                 .addFileTypeValidator({
                     fileType: /(jpg|jpeg|png|webp)$/
