@@ -53,9 +53,6 @@ export class FaceController {
         @UploadedFile(
             new FileTypeValidationPipe(),
             new ParseFilePipeBuilder()
-                .addMaxSizeValidator({
-                    maxSize: 1000000
-                })
                 .build({
                     fileIsRequired: true,
                     errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
