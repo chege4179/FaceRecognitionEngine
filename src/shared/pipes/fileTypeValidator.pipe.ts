@@ -15,7 +15,8 @@ export class FileTypeValidationPipe implements PipeTransform {
                 "image/jpeg",
                 "image/jpg",
                 "image/png",
-                "image/webp"
+                "image/webp",
+                "image/heic"
             ]
 
             if (!MIME_TYPES.includes(result.mime)) {
