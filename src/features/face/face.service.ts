@@ -220,10 +220,8 @@ export class FaceService {
                 }
             }
         }catch (error) {
-            await this.commonFunction.errorResponseMapping({
-                message:error.response.message,
-                code:error.response.error,
-            });
+            Logger.error(error)
+            throw new BadRequestException(error.response)
         }
     }
 
