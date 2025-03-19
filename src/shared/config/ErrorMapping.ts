@@ -67,6 +67,10 @@ export const ErrorMapping = {
     MIME_TYPE_CHECK_FAILED: {
         message: "We were unable to detect your mime type. Please try again later",
         code: 'MIME_TYPE_CHECK_FAILED',
+    },
+    NO_FILE_FOUND: {
+        message: "File is required. Please try again later",
+        code: 'NO_FILE_FOUND',
     }
 
 }

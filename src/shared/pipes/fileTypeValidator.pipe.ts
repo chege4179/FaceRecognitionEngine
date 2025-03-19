@@ -9,6 +9,13 @@ export class FileTypeValidationPipe implements PipeTransform {
 
         const {fileTypeFromBuffer} = await loadEsm<typeof import('file-type')>('file-type')
 
+        if (!value) {
+            throw new BadRequestException(ErrorMapping.NO_FILE_FOUND.message, {
+                cause: new Error(),
+                description: ErrorMapping.NO_FILE_FOUND.code,
+            });
+        }
+
         const result = await fileTypeFromBuffer(value.buffer)
 
         Logger.log(`MIME received ${result.mime}`, "FileTypeValidationPipe")
