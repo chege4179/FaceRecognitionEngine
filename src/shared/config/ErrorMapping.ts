@@ -59,6 +59,14 @@ export const ErrorMapping = {
     FACE_DETAILS_NOT_FOUND: {
         message: 'We find your details at this time. Please try again later',
         code: 'FACE_DETAILS_NOT_FOUND',
+    },
+    INVALID_MIME_TYPE: {
+        message: "Invalid mime type detected. The image should be either jpeg, png, or webp.",
+        code: 'INVALID_MIME_TYPE',
+    },
+    MIME_TYPE_CHECK_FAILED: {
+        message: "We were unable to detect your mime type. Please try again later",
+        code: 'MIME_TYPE_CHECK_FAILED',
     }
 
 }
