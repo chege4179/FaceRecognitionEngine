@@ -34,11 +34,9 @@ export class FaceController {
         @UploadedFile(
             new FileTypeValidationPipe(),
             new ParseFilePipeBuilder()
-                .addMaxSizeValidator({
-                    maxSize: 1000000
-                })
                 .build({
-                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+                    fileIsRequired: true,
+                    errorHttpStatusCode: HttpStatus.BAD_REQUEST
                 })
         ) file: Express.Multer.File,
     ) {
@@ -55,7 +53,7 @@ export class FaceController {
             new ParseFilePipeBuilder()
                 .build({
                     fileIsRequired: true,
-                    errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY
+                    errorHttpStatusCode: HttpStatus.BAD_REQUEST
                 })
         ) file: Express.Multer.File,
     ) {
