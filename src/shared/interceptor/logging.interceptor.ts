@@ -10,9 +10,9 @@ export class LoggingInterceptor implements NestInterceptor {
         const req = context.switchToHttp().getRequest();
         return next.handle().pipe(
             tap(() => {
-                if (req.deviceName) {
+                if (req.ip) {
                     Logger.log(
-                        ` Device: ${req.deviceName} ,${req.method} ${req.url} : ${Date.now() - now}ms,`,
+                        `IP Address: ${req.ip} ,${req.method} ${req.url} : ${Date.now() - now}ms,`,
                         context.getClass().name,
                     );
                 } else if (req.method || req.url) {
