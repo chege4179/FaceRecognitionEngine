@@ -32,7 +32,7 @@ import {CloudinaryModule} from "nestjs-cloudinary";
                 return {
                     type: 'mysql',
                     url: dbUrl,
-                    synchronize: shouldSynchronize,
+                    synchronize: false,
                     entities: ['dist/src/shared/entity/*.entity.{js,ts}'],
                     logging: ["error"],
                 }

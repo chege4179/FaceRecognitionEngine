@@ -12,7 +12,7 @@ export class LoggingInterceptor implements NestInterceptor {
             tap(() => {
                 if (req.ip) {
                     Logger.log(
-                        `IP Address: ${req.ip} ,${req.method} ${req.url} : ${Date.now() - now}ms,`,
+                        `(${req.ip}) ,${req.method} ${req.url} : ${Date.now() - now}ms,`,
                         context.getClass().name,
                     );
                 } else if (req.method || req.url) {

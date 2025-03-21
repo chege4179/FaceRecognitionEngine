@@ -23,6 +23,7 @@ import {AppConfig} from "../../shared/util/appConfig";
 import {DeleteFaceDto} from "../../shared/dto/delete-face-dto";
 import {CloudinaryRepositoryService} from "../../shared/cloudinary/cloudinary-repository.service";
 import {FaceRepositoryService} from "../../shared/repository/face-repository.service";
+import {ConfigService} from "@nestjs/config";
 
 
 @Injectable()
@@ -35,9 +36,14 @@ export class FaceService {
         private readonly faceRepositoryService: FaceRepositoryService,
         private readonly commonFunction: CommonFunction,
         @InjectAws(RekognitionClient)
-        private readonly rekognitionClient: RekognitionClient
+        private readonly rekognitionClient: RekognitionClient,
+        private readonly configService: ConfigService,
+
+
     ) {
     }
+
+    environment = this.configService.getOrThrow("NODE_ENV");
 
 
     async getAllSavedFaces() {
@@ -220,7 +226,9 @@ export class FaceService {
                 }
             }
         }catch (error) {
-            Logger.error(error)
+            if (this.environment === "development") {
+                Logger.error(error)
+            }
             throw new BadRequestException(error.response)
         }
     }
@@ -245,7 +253,9 @@ export class FaceService {
             }
 
         } catch (error) {
-            Logger.error(error);
+            if (this.environment === "development") {
+                Logger.error(error)
+            }
             await this.commonFunction.errorResponseMapping(error)
         }
     }

@@ -5,6 +5,7 @@ import {CaptureFaceDetailsDto} from "../dto/capture-face-details-dto";
 import {CommonFunction} from "../util/CommonFunction";
 import {ErrorMapping} from "../config/ErrorMapping";
 import {Logger} from "@nestjs/common";
+import {ConfigService} from "@nestjs/config";
 
 
 export class FaceRepositoryService {
@@ -12,8 +13,11 @@ export class FaceRepositoryService {
         @InjectRepository(FaceEntity)
         private readonly faceRepository: Repository<FaceEntity>,
         private readonly commonFunction: CommonFunction,
+        private readonly configService: ConfigService,
     ) {
     }
+
+    environment = this.configService.getOrThrow("NODE_ENV");
 
     async validateIdNoNotDuplicated(payload: CaptureFaceDetailsDto): Promise<any> {
         const existingFaceDetails = await this.faceRepository.findOne(
@@ -36,7 +40,9 @@ export class FaceRepositoryService {
             }
             return
         } catch (error) {
-            Logger.error(error);
+            if (this.environment === "development") {
+                Logger.error(error)
+            }
             await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETAILS_NOT_FOUND)
         }
     }
