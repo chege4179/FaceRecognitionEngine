@@ -13,9 +13,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
         const errorResponse = exception.getResponse();
 
 
-        Logger.error(`${request.method} ${request.url}  ${JSON.stringify(errorResponse)}`,
-            LoggerTags.EXCEPTION_FILTER
-        );
+        if (request.ip){
+            Logger.error(`(${request.ip}) ${request.method} ${request.url}  ${JSON.stringify(errorResponse)}`,
+                LoggerTags.EXCEPTION_FILTER
+            );
+        }else {
+            Logger.error(`${request.method} ${request.url}  ${JSON.stringify(errorResponse)}`,
+                LoggerTags.EXCEPTION_FILTER
+            );
+        }
+
         response.status(statusCode).json(errorResponse);
     }
 }
