@@ -46,4 +46,9 @@ export class FaceRepositoryService {
             await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETAILS_NOT_FOUND)
         }
     }
+
+
+    async deleteUserById(id: string): Promise<any> {
+        await this.faceRepository.delete(id)
+    }
 }

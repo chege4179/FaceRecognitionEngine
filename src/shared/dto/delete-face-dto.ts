@@ -6,6 +6,6 @@ export class DeleteFaceDto{
     @IsUUID()
     @IsNotEmpty()
     @IsDefined()
-    faceId:string
+    userId:string
 
 }

@@ -10,6 +10,7 @@ import {RekognitionClient} from "@aws-sdk/client-rekognition";
 import {CloudinaryRepositoryService} from "../cloudinary/cloudinary-repository.service";
 import {FaceRepositoryService} from "../repository/face-repository.service";
 import {CloudinaryModule} from "nestjs-cloudinary";
+import {RekognitionRepositoryService} from "../repository/rekognition-repository.service";
 
 
 @Module({
@@ -67,6 +68,7 @@ import {CloudinaryModule} from "nestjs-cloudinary";
         CommonFunction,
         CloudinaryRepositoryService,
         FaceRepositoryService,
+        RekognitionRepositoryService,
     ],
     exports: [
         ConfigModule,
@@ -77,6 +79,7 @@ import {CloudinaryModule} from "nestjs-cloudinary";
         AwsSdkModule,
         CloudinaryRepositoryService,
         FaceRepositoryService,
+        RekognitionRepositoryService,
     ]
 })
 export class SharedModule {

@@ -71,6 +71,10 @@ export const ErrorMapping = {
     NO_FILE_FOUND: {
         message: "File is required. Please try again later",
         code: 'NO_FILE_FOUND',
+    },
+    USER_NOT_FOUND: {
+        message: 'User not found',
+        code: 'USER_NOT_FOUND',
     }
 
 }

@@ -23,6 +23,7 @@ import {DeleteFaceDto} from "../../shared/dto/delete-face-dto";
 import {CloudinaryRepositoryService} from "../../shared/cloudinary/cloudinary-repository.service";
 import {FaceRepositoryService} from "../../shared/repository/face-repository.service";
 import {AppConfiguration} from "../../app/app.configuration";
+import {RekognitionRepositoryService} from "../../shared/repository/rekognition-repository.service";
 
 
 @Injectable()
@@ -33,6 +34,7 @@ export class FaceService {
         private readonly faceRepository: Repository<FaceEntity>,
         private readonly cloudinaryRepository: CloudinaryRepositoryService,
         private readonly faceRepositoryService: FaceRepositoryService,
+        private readonly rekognitionRepositoryService: RekognitionRepositoryService,
         private readonly commonFunction: CommonFunction,
         @InjectAws(RekognitionClient)
         private readonly rekognitionClient: RekognitionClient,
@@ -235,29 +237,30 @@ export class FaceService {
 
     async deleteFaces(payload: DeleteFaceDto) {
         try {
-            const request: DeleteFacesCommandInput = {
-                CollectionId: AppConfig.FACE_COLLECTION_ID,
-                FaceIds: [payload.faceId]
-            }
-            const command = new DeleteFacesCommand(request)
-            const response = await this.rekognitionClient.send(command)
-            if (response.$metadata.httpStatusCode === HttpStatus.OK) {
-                if (response?.DeletedFaces?.length === 0) {
-                    await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_NOT_FOUND)
-                } else {
-                    this.commonFunction.successResponse("Face deleted successfully")
+
+            const user = await this.faceRepository.findOne({
+                where:{
+                    id:payload.userId
                 }
-            } else {
-                await this.commonFunction.errorResponseMapping(ErrorMapping.DELETE_FACE_FAILED)
+            })
+            if (!user){
+                await this.commonFunction.errorResponseMapping(ErrorMapping.USER_NOT_FOUND)
             }
+            await this.cloudinaryRepository.deleteImageById(user.imageId)
+            await this.rekognitionRepositoryService.deleteImageFromRecognition(user.faceId)
+            await this.faceRepositoryService.deleteUserById(payload.userId)
+
+            return this.commonFunction.successResponse("Face deleted successfully")
 
         } catch (error) {
             if (this.environment === "development") {
                 Logger.error(error)
             }
-            await this.commonFunction.errorResponseMapping(error)
+            if (error.response){
+                await this.commonFunction.errorResponseMapping(error.response)
+            }else {
+                await this.commonFunction.errorResponseMapping(error)
+            }
         }
     }
-
-
 }
