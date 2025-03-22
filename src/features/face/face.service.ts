@@ -9,7 +9,6 @@ import {ErrorMapping} from "src/shared/config/ErrorMapping";
 import {
     DeleteFacesCommand,
     DeleteFacesCommandInput,
-    DescribeCollectionCommand,
     DetectFacesCommand,
     DetectFacesRequest,
     IndexFacesCommand,
@@ -23,7 +22,7 @@ import {AppConfig} from "../../shared/util/appConfig";
 import {DeleteFaceDto} from "../../shared/dto/delete-face-dto";
 import {CloudinaryRepositoryService} from "../../shared/cloudinary/cloudinary-repository.service";
 import {FaceRepositoryService} from "../../shared/repository/face-repository.service";
-import {ConfigService} from "@nestjs/config";
+import {AppConfiguration} from "../../app/app.configuration";
 
 
 @Injectable()
@@ -37,13 +36,13 @@ export class FaceService {
         private readonly commonFunction: CommonFunction,
         @InjectAws(RekognitionClient)
         private readonly rekognitionClient: RekognitionClient,
-        private readonly configService: ConfigService,
+        private readonly appConfiguration: AppConfiguration,
+
+    ) {}
+
+    environment = this.appConfiguration.environment
 
 
-    ) {
-    }
-
-    environment = this.configService.getOrThrow("NODE_ENV");
 
 
     async getAllSavedFaces() {

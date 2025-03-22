@@ -76,7 +76,7 @@ import {CloudinaryModule} from "nestjs-cloudinary";
         CommonFunction,
         AwsSdkModule,
         CloudinaryRepositoryService,
-        FaceRepositoryService
+        FaceRepositoryService,
     ]
 })
 export class SharedModule {
