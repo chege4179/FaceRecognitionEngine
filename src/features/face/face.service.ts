@@ -7,16 +7,11 @@ import {CommonFunction} from "../../shared/util/CommonFunction";
 import {InjectAws} from "aws-sdk-v3-nest";
 import {ErrorMapping} from "src/shared/config/ErrorMapping";
 import {
-    DeleteFacesCommand,
-    DeleteFacesCommandInput,
     DetectFacesCommand,
-    DetectFacesRequest,
     IndexFacesCommand,
-    IndexFacesCommandInput,
     ListFacesCommand,
     RekognitionClient,
-    SearchFacesByImageCommand,
-    SearchFacesByImageCommandInput
+    SearchFacesByImageCommand
 } from "@aws-sdk/client-rekognition";
 import {AppConfig} from "../../shared/util/appConfig";
 import {DeleteFaceDto} from "../../shared/dto/delete-face-dto";
@@ -39,26 +34,22 @@ export class FaceService {
         @InjectAws(RekognitionClient)
         private readonly rekognitionClient: RekognitionClient,
         private readonly appConfiguration: AppConfiguration,
-
-    ) {}
+    ) {
+    }
 
     environment = this.appConfiguration.environment
-
-
-
 
     async getAllSavedFaces() {
         try {
             const listFaceCollectionsCommand = new ListFacesCommand({
                 CollectionId: AppConfig.FACE_COLLECTION_ID,
             })
-
             const userData = await this.faceRepository.find()
             const faces = await this.rekognitionClient.send(listFaceCollectionsCommand)
             const facesData = userData.map(user => {
                 return {
                     ...user,
-                    faceVectorDetails:faces?.Faces?.find(face => face.FaceId === user.faceId)
+                    faceVectorDetails: faces?.Faces?.find(face => face.FaceId === user.faceId)
                 }
             })
             return {
@@ -76,15 +67,12 @@ export class FaceService {
         const collectionArn = "aws:rekognition:us-east-1:491085424971:collection/faces"
         await this.faceRepositoryService.validateIdNoNotDuplicated(payload)
 
-        const detectFacesRequest: DetectFacesRequest = {
+        const detectFacesCommand: DetectFacesCommand = new DetectFacesCommand({
             Image: {
                 Bytes: file.buffer,
             },
             Attributes: ['ALL'],
-        };
-        const detectFacesCommand: DetectFacesCommand = new DetectFacesCommand(
-            detectFacesRequest,
-        );
+        });
         const response = await this.rekognitionClient.send(detectFacesCommand);
 
         if (response) {
@@ -93,30 +81,26 @@ export class FaceService {
                     const faceCount = response.FaceDetails.length
                     Logger.log(`No of Faces detected ${faceCount}`,);
                     if (faceCount < 2) {
-                        const faceDetails = response.FaceDetails[0];
-
-                        const searchFacesRequest: SearchFacesByImageCommandInput = {
+                        const command = new SearchFacesByImageCommand({
                             CollectionId: AppConfig.FACE_COLLECTION_ID,
                             MaxFaces: 1,
                             FaceMatchThreshold: 95,
                             Image: {
                                 Bytes: file.buffer,
                             }
-                        }
-                        const command = new SearchFacesByImageCommand(searchFacesRequest)
+                        })
                         const searchResult = await this.rekognitionClient.send(command)
                         if (searchResult) {
                             const faceMatches = searchResult.FaceMatches
                             if (faceMatches) {
                                 if (faceMatches.length === 0) {
-                                    const indexFacesRequest: IndexFacesCommandInput = {
-                                        CollectionId: "faces",
+                                    const command = new IndexFacesCommand({
+                                        CollectionId: AppConfig.FACE_COLLECTION_ID,
                                         MaxFaces: 1,
                                         Image: {
                                             Bytes: file.buffer,
                                         },
-                                    }
-                                    const command = new IndexFacesCommand(indexFacesRequest)
+                                    })
                                     const result = await this.rekognitionClient.send(command)
                                     if (result) {
                                         const uploadCloudinaryResult = await this.cloudinaryRepository.uploadImage(file)
@@ -149,12 +133,10 @@ export class FaceService {
                             } else {
                                 await this.commonFunction.errorResponseMapping(ErrorMapping.SEARCH_FACES_FAILED)
                             }
-
                         } else {
                             await this.commonFunction.errorResponseMapping(ErrorMapping.SEARCH_FACES_FAILED)
                         }
                     } else {
-
                         await this.commonFunction.errorResponseMapping(ErrorMapping.MULTIPLE_FACES_DETECTED)
                     }
                 } else {
@@ -168,25 +150,21 @@ export class FaceService {
         }
     }
 
-
     async queryFaceMatches(file: Express.Multer.File) {
         try {
-            const detectFacesRequest: DetectFacesRequest = {
+            const detectFacesCommand: DetectFacesCommand = new DetectFacesCommand({
                 Image: {
                     Bytes: file.buffer,
                 },
                 Attributes: ['ALL'],
-            };
-            const detectFacesCommand: DetectFacesCommand = new DetectFacesCommand(
-                detectFacesRequest,
-            );
+            });
             const detectFacesResponse = await this.rekognitionClient.send(detectFacesCommand)
             if (detectFacesResponse) {
-                if (detectFacesResponse.$metadata.httpStatusCode === HttpStatus.OK){
-                    if (detectFacesResponse.FaceDetails){
+                if (detectFacesResponse.$metadata.httpStatusCode === HttpStatus.OK) {
+                    if (detectFacesResponse.FaceDetails) {
                         if (detectFacesResponse.FaceDetails.length === 0) {
                             await this.commonFunction.errorResponseMapping(ErrorMapping.NO_FACE_DETECTED);
-                        }else {
+                        } else {
                             if (detectFacesResponse.FaceDetails.length === 1) {
                                 const command = new SearchFacesByImageCommand({
                                     CollectionId: AppConfig.FACE_COLLECTION_ID,
@@ -203,30 +181,30 @@ export class FaceService {
                                     if (matches && matches.length > 0) {
                                         const firstMatchFaceId = matches[0]?.Face
                                         const user = await this.faceRepositoryService.findUserByFaceID(firstMatchFaceId?.FaceId || "")
-                                        if (user){
+                                        if (user) {
                                             return {
                                                 msg: "User found",
                                                 user: user,
                                             }
-                                        }else {
+                                        } else {
                                             await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETAILS_NOT_FOUND)
                                         }
                                     } else {
                                         await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_SEARCH_NOT_FOUND)
                                     }
                                 }
-                            }else {
+                            } else {
                                 await this.commonFunction.errorResponseMapping(ErrorMapping.MULTIPLE_FACES_DETECTED);
                             }
                         }
-                    }else {
+                    } else {
                         await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETECTION_FAILED);
                     }
-                }else {
+                } else {
                     await this.commonFunction.errorResponseMapping(ErrorMapping.FACE_DETECTION_FAILED);
                 }
             }
-        }catch (error) {
+        } catch (error) {
             if (this.environment === "development") {
                 Logger.error(error)
             }
@@ -234,16 +212,14 @@ export class FaceService {
         }
     }
 
-
     async deleteFaces(payload: DeleteFaceDto) {
         try {
-
             const user = await this.faceRepository.findOne({
-                where:{
-                    id:payload.userId
+                where: {
+                    id: payload.userId
                 }
             })
-            if (!user){
+            if (!user) {
                 await this.commonFunction.errorResponseMapping(ErrorMapping.USER_NOT_FOUND)
             }
             await this.cloudinaryRepository.deleteImageById(user.imageId)
@@ -256,9 +232,9 @@ export class FaceService {
             if (this.environment === "development") {
                 Logger.error(error)
             }
-            if (error.response){
+            if (error.response) {
                 await this.commonFunction.errorResponseMapping(error.response)
-            }else {
+            } else {
                 await this.commonFunction.errorResponseMapping(error)
             }
         }

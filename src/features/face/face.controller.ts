@@ -67,6 +67,4 @@ export class FaceController {
     ) {
         return await this.faceService.deleteFaces(payload);
     }
-
-
 }

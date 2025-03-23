@@ -1,4 +1,4 @@
-import {BadRequestException, HttpStatus, Injectable, UnauthorizedException} from "@nestjs/common";
+import {BadRequestException, HttpStatus, Injectable} from "@nestjs/common";
 import {SuccessResponse} from "../config/successResponse";
 import {ErrorsCheckDto} from "../config/error-checks-dto";
 import {IndexFacesCommandOutput} from "@aws-sdk/client-rekognition";

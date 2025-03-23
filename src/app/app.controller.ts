@@ -1,6 +1,5 @@
-import {Body, Controller, Get, HttpCode, HttpStatus, Post} from '@nestjs/common';
+import {Controller, Get, HttpCode, HttpStatus} from '@nestjs/common';
 import {AppService} from './app.service';
-import {ImageUrlDto} from "../shared/dto/imageUrl-dto";
 
 @Controller()
 export class AppController {
@@ -11,18 +10,6 @@ export class AppController {
     @Get()
     getHello(): string {
         return this.appService.getHello();
-    }
-
-    @HttpCode(HttpStatus.OK)
-    @Get("seedData")
-    async seedData() {
-        return await this.appService.clearData();
-    }
-
-    @HttpCode(HttpStatus.OK)
-    @Post("getImageBase64")
-    getImageBase64(@Body() payload: ImageUrlDto){
-        return this.appService.getImageUrlBase64(payload);
     }
 
 }
