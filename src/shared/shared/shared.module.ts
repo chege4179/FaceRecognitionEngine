@@ -7,7 +7,7 @@ import {FaceEntity} from "../entity/face.entity";
 import {CommonFunction} from "../util/CommonFunction";
 import {AwsSdkModule} from "aws-sdk-v3-nest";
 import {RekognitionClient} from "@aws-sdk/client-rekognition";
-import {CloudinaryRepositoryService} from "../cloudinary/cloudinary-repository.service";
+import {CloudinaryRepositoryService} from "../repository/cloudinary-repository.service";
 import {FaceRepositoryService} from "../repository/face-repository.service";
 import {CloudinaryModule} from "nestjs-cloudinary";
 import {RekognitionRepositoryService} from "../repository/rekognition-repository.service";

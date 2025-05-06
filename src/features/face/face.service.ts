@@ -8,14 +8,14 @@ import {InjectAws} from "aws-sdk-v3-nest";
 import {ErrorMapping} from "src/shared/config/ErrorMapping";
 import {
     DetectFacesCommand,
-    IndexFacesCommand,
+    IndexFacesCommand, ListCollectionsCommand,
     ListFacesCommand,
     RekognitionClient,
     SearchFacesByImageCommand
 } from "@aws-sdk/client-rekognition";
 import {AppConfig} from "../../shared/util/appConfig";
 import {DeleteFaceDto} from "../../shared/dto/delete-face-dto";
-import {CloudinaryRepositoryService} from "../../shared/cloudinary/cloudinary-repository.service";
+import {CloudinaryRepositoryService} from "../../shared/repository/cloudinary-repository.service";
 import {FaceRepositoryService} from "../../shared/repository/face-repository.service";
 import {AppConfiguration} from "../../app/app.configuration";
 import {RekognitionRepositoryService} from "../../shared/repository/rekognition-repository.service";
@@ -44,7 +44,9 @@ export class FaceService {
             const listFaceCollectionsCommand = new ListFacesCommand({
                 CollectionId: AppConfig.FACE_COLLECTION_ID,
             })
+            const listCollectionsCommand  = new ListCollectionsCommand()
             const userData = await this.faceRepository.find()
+            const collections = await this.rekognitionClient.send(listCollectionsCommand)
             const faces = await this.rekognitionClient.send(listFaceCollectionsCommand)
             const facesData = userData.map(user => {
                 return {
@@ -53,6 +55,7 @@ export class FaceService {
                 }
             })
             return {
+                collections: collections.CollectionIds,
                 faces: facesData,
             }
         } catch (e) {
@@ -205,9 +208,7 @@ export class FaceService {
                 }
             }
         } catch (error) {
-            if (this.environment === "development") {
-                Logger.error(error)
-            }
+            Logger.error(error.response)
             throw new BadRequestException(error.response)
         }
     }
